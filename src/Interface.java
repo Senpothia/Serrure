@@ -8,10 +8,14 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Enumeration;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
@@ -62,6 +66,7 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
     private FileWriter fluxSortie;
     private BufferedWriter Sortie;
     private File Repertoire;
+    private String ligneEnCours;
     
     // Variables de séquence de test
     
@@ -71,6 +76,11 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
     private String config = null;
     private SerialPortEvent SerialPortEvent;
     private boolean acquittement;
+    private long compteur1 = 0;
+    private long compteur2 = 0;
+    private long compteur3 = 0;
+    private int interval = 1;
+    private int nbr_seqs = 0; 
    
     /**
      * Creates new form Interface
@@ -92,6 +102,10 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
         jCheckBox2.setSelected(false);
         jCheckBox3.setSelected(false);
         jTextField4.setVisible(false);
+        jButton13.setVisible(false);
+        jTextField5.setVisible(false);
+        jTextField5.setVisible(false);
+        jButton14.setVisible(false);
         jButton13.setVisible(false);
         
     }
@@ -174,7 +188,9 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
         JOptionPane.showMessageDialog(this, message, "Erreur nom de fichier!", JOptionPane.ERROR_MESSAGE);
     }
 
-
+     public void montrerErrorInterval(String message){
+        JOptionPane.showMessageDialog(this, message, "Valeur d'interval incorrecte", JOptionPane.ERROR_MESSAGE);
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -196,7 +212,6 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
         jButton6 = new javax.swing.JButton();
         jComboBox1 = new javax.swing.JComboBox<>();
         jPanel2 = new javax.swing.JPanel();
-        jLabel8 = new javax.swing.JLabel();
         jCheckBox1 = new javax.swing.JCheckBox();
         jLabel2 = new javax.swing.JLabel();
         jCheckBox3 = new javax.swing.JCheckBox();
@@ -211,6 +226,7 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
         jButton9 = new javax.swing.JButton();
         jButton10 = new javax.swing.JButton();
         jButton11 = new javax.swing.JButton();
+        jLabel8 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jButton2 = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
@@ -220,6 +236,8 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
         jButton12 = new javax.swing.JButton();
         jTextField4 = new javax.swing.JTextField();
         jButton13 = new javax.swing.JButton();
+        jTextField5 = new javax.swing.JTextField();
+        jButton14 = new javax.swing.JButton();
 
         jButton4.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jButton4.setText("STOP");
@@ -278,12 +296,8 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
                 .addGap(33, 33, 33))
         );
 
-        jLabel8.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        jLabel8.setForeground(new java.awt.Color(51, 51, 255));
-        jLabel8.setText("jLabel2");
-
-        jCheckBox1.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        jCheckBox1.setText("Echantiilon1");
+        jCheckBox1.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jCheckBox1.setText("Echantillon1");
         jCheckBox1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jCheckBox1ActionPerformed(evt);
@@ -294,8 +308,8 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
         jLabel2.setForeground(new java.awt.Color(51, 51, 255));
         jLabel2.setText("jLabel2");
 
-        jCheckBox3.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        jCheckBox3.setText("Echantiilon3");
+        jCheckBox3.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jCheckBox3.setText("Echantillon3");
         jCheckBox3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jCheckBox3ActionPerformed(evt);
@@ -306,16 +320,16 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
         jLabel4.setForeground(new java.awt.Color(51, 51, 255));
         jLabel4.setText("jLabel2");
 
-        jCheckBox2.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jCheckBox2.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         jCheckBox2.setSelected(true);
-        jCheckBox2.setText("Echantiilon2");
+        jCheckBox2.setText("Echantillon2");
         jCheckBox2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jCheckBox2ActionPerformed(evt);
             }
         });
 
-        jButton1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jButton1.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         jButton1.setForeground(new java.awt.Color(255, 0, 51));
         jButton1.setText("Reset");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -324,7 +338,7 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
             }
         });
 
-        jButton3.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jButton3.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         jButton3.setForeground(new java.awt.Color(255, 0, 51));
         jButton3.setText("Reset");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
@@ -333,11 +347,16 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
             }
         });
 
-        jButton7.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jButton7.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         jButton7.setForeground(new java.awt.Color(255, 0, 51));
         jButton7.setText("Reset");
+        jButton7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton7ActionPerformed(evt);
+            }
+        });
 
-        jButton9.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jButton9.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         jButton9.setForeground(new java.awt.Color(255, 0, 0));
         jButton9.setText("Set");
         jButton9.addActionListener(new java.awt.event.ActionListener() {
@@ -346,7 +365,7 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
             }
         });
 
-        jButton10.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jButton10.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         jButton10.setForeground(new java.awt.Color(255, 0, 0));
         jButton10.setText("Set");
         jButton10.addActionListener(new java.awt.event.ActionListener() {
@@ -355,9 +374,18 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
             }
         });
 
-        jButton11.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jButton11.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         jButton11.setForeground(new java.awt.Color(255, 0, 0));
         jButton11.setText("Set");
+        jButton11.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton11ActionPerformed(evt);
+            }
+        });
+
+        jLabel8.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel8.setForeground(new java.awt.Color(51, 51, 255));
+        jLabel8.setText("jLabel2");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -370,28 +398,26 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(6, 6, 6)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(jCheckBox3, javax.swing.GroupLayout.DEFAULT_SIZE, 139, Short.MAX_VALUE)
+                            .addComponent(jCheckBox2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(42, 42, 42)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jCheckBox3, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jButton7)
-                                .addGap(18, 18, 18)
-                                .addComponent(jTextField3, javax.swing.GroupLayout.DEFAULT_SIZE, 129, Short.MAX_VALUE))
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jCheckBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jButton3)
-                                .addGap(18, 18, 18)
-                                .addComponent(jTextField2))))
+                            .addComponent(jButton3, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jButton7, javax.swing.GroupLayout.Alignment.TRAILING))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jTextField3)
+                            .addComponent(jTextField2)))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jCheckBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jCheckBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(36, 36, 36)
                         .addComponent(jButton1)
                         .addGap(18, 18, 18)
-                        .addComponent(jTextField1)))
+                        .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 227, Short.MAX_VALUE)))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jButton9)
@@ -402,14 +428,13 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jCheckBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jButton1)
-                        .addComponent(jButton9)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(32, 32, 32)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jCheckBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton1)
+                    .addComponent(jButton9)
+                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -514,28 +539,20 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
             }
         });
 
+        jTextField5.setText("1");
+
+        jButton14.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jButton14.setText("Annuler");
+        jButton14.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton14ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(238, 238, 238)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(23, 23, 23)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 335, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(231, 231, 231)))
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jTextField4)
-                    .addComponent(jButton12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton13, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(63, 63, 63))
             .addGroup(layout.createSequentialGroup()
                 .addGap(423, 423, 423)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -544,29 +561,55 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
                 .addContainerGap(74, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1054, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(49, 49, 49))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(21, 21, 21)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(207, 207, 207)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 335, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jTextField5)
+                    .addComponent(jTextField4)
+                    .addComponent(jButton12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton13, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton14, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(63, 63, 63))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(27, 27, 27)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
+                        .addGap(27, 27, 27)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jButton8)
                             .addComponent(jLabel1))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton12, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
                         .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(27, 27, 27)
+                        .addGap(18, 18, 18)
+                        .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
                         .addComponent(jButton13, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(4, 4, 4))
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(9, 9, 9)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(90, 90, 90)
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(53, 53, 53)
+                        .addGap(18, 18, 18)
+                        .addComponent(jButton14, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(0, 11, Short.MAX_VALUE)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 76, Short.MAX_VALUE)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(90, 90, 90)
+                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(53, 53, 53)))
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(19, 19, 19))
         );
@@ -583,11 +626,12 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
         
         if (!jCheckBox1.isSelected() && !jCheckBox2.isSelected() && !jCheckBox3.isSelected()){
         
-        
+            test_on = false;
             montrerErrorConfig("Défaut de configuration");
         
-        }
-        if (jCheckBox1.isSelected()){
+        }else{
+        //*************************
+           if (jCheckBox1.isSelected()){
         
             echantiilons[0]= true;
             config = "!1:";
@@ -651,6 +695,10 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
         jButton5.setVisible(true);
         jButton5.setText("PAUSE");
        // jTextArea1.setText("Le test est lancé");
+        //**************************
+        }
+        
+     
        
         } else {
             test_pause = false;
@@ -662,6 +710,7 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
             jButton5.setVisible(false);
             jLabel6.setVisible(false);
             jTextArea1.setText("Test interrompu!");
+            gestionEnregistrement();
         }
          
         
@@ -734,13 +783,26 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        // TODO add your handling code here:
+        envoyerData(RAZ2);
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
         
-        envoyerData(arret);
+        JOptionPane.showMessageDialog(this, "Voulez-vous fermer ce programme?", "Fermeture programme", JOptionPane.INFORMATION_MESSAGE);
+        try {
+            
+            envoyerData(arret);
+            gestionEnregistrement();
+            Sortie.close();
+            
+        } catch (IOException ex) {
+            
+        }
         System.exit(0);
+        
+        //********
+        //envoyerData(arret);
+        //System.exit(0);
         
     }//GEN-LAST:event_jButton8ActionPerformed
 
@@ -750,61 +812,89 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
-        // TODO add your handling code here:
+       
+        String compteur1 = jTextField1.getText();
+        compteur1 = "#1:" + compteur1;
+        envoyerData(compteur1);
+        
     }//GEN-LAST:event_jButton9ActionPerformed
 
     private void jButton10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton10ActionPerformed
-        // TODO add your handling code here:
+      
+        String compteur2 = jTextField2.getText();
+        compteur2 = "#2:" + compteur2;
+        envoyerData(compteur2);
     }//GEN-LAST:event_jButton10ActionPerformed
 
     private void jButton12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton12ActionPerformed
-
-        /*
-        int showOpenDialog = SelectFichier.showOpenDialog(this);
-
-        Repertoire= SelectFichier.getSelectedFile();
-       // Produit=Prod.getText();
-        //of=OF.getText();
-       // Sceance=Serie.getText();
-       //nomFichier=Repertoire + "\\" +Produit+"_"+of+"_"+Sceance+".txt";
-        nomFichier=Repertoire + "\\" + "test_DX200I.txt";
-        System.out.println(Repertoire);
-        //System.out.println(nomFichier);
-        initFichier();
-        */
+        
+        if(!test_on){
         
         jTextField4.setVisible(true);
         jButton13.setVisible(true);
         jButton12.setVisible(false);
+        jTextField5.setVisible(true);
+        jButton14.setVisible(false);
+        
+        }else{
+        
+        jTextField4.setVisible(false);
+        jButton13.setVisible(true);
+        jButton12.setVisible(false);
+        jTextField5.setVisible(true);
+        jButton14.setVisible(true);
+        }
+      
       
         
     }//GEN-LAST:event_jButton12ActionPerformed
 
     private void jButton13ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton13ActionPerformed
         
+        if(!test_on){
+        
         nomFichier = jTextField4.getText();
         System.out.println("Nom de fichier choisi: " + nomFichier);
         int showOpenDialog = SelectFichier.showOpenDialog(this);
+        
         if(nomFichier.equals("") || nomFichier.equals("<nom fichier>")){
         
         montrerErrorNom("Défaut de nom!");
         
         }else{
-        
-        Repertoire= SelectFichier.getSelectedFile();
-        nomFichier=Repertoire + "\\" + nomFichier + ".txt";
-        System.out.println(Repertoire);
-        System.out.println("nom fichier complet: " + nomFichier);
-        initFichier();
-        jTextField4.setVisible(false);
-        jButton13.setVisible(false);
-        jButton12.setVisible(true);
-        jTextArea1.setText("Les fichiers de résultats seront sauvegardés dans le fichier: " + nomFichier);
+            
+            enregisterInterval();
+         
         }
-
+   }else{
+        
+        enregisterInterval();
+        
+        }
        
         
     }//GEN-LAST:event_jButton13ActionPerformed
+
+    private void jButton14ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton14ActionPerformed
+        
+        jTextField5.setVisible(false);
+        jButton14.setVisible(false);
+        jButton13.setVisible(false);
+        jButton12.setVisible(true);
+        
+    }//GEN-LAST:event_jButton14ActionPerformed
+
+    private void jButton11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton11ActionPerformed
+      
+        String compteur3 = jTextField3.getText();
+        compteur3 = "#3:" + compteur3;
+        envoyerData(compteur3);
+        
+    }//GEN-LAST:event_jButton11ActionPerformed
+
+    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
+         envoyerData(RAZ3);        
+    }//GEN-LAST:event_jButton7ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -848,6 +938,7 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
     private javax.swing.JButton jButton11;
     private javax.swing.JButton jButton12;
     private javax.swing.JButton jButton13;
+    private javax.swing.JButton jButton14;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
@@ -877,6 +968,7 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
     private javax.swing.JTextField jTextField4;
+    private javax.swing.JTextField jTextField5;
     // End of variables declaration//GEN-END:variables
 
     @Override
@@ -890,7 +982,7 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
                              System.out.println(inputLine);
                              jTextArea1.setText(inputLine);
                              boolean isCompteur;
-                            
+                           
                              isCompteur = inputLine.startsWith("TOTAL");
                              if (isCompteur){
                              
@@ -903,24 +995,48 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
                              if (ech.equals("#1:")){
                              
                              jLabel8.setText(compteur);
+                             compteur1 = Long.parseLong(compteur);
                              
                              }
                              
                              if (ech.equals("#2:")){
                              
                              jLabel2.setText(compteur);
-                             
+                             compteur2 = Long.parseLong(compteur);
                              }
                               
                              if (ech.equals("#3:")){
                              
                              jLabel4.setText(compteur);
+                             compteur1 = Long.parseLong(compteur);
                              
                              }
+                    
+                             }
+                            
+                            
+                            if(inputLine.equals("@SEQ")){
+                                
+                                nbr_seqs++;
+                                
+                                if (nbr_seqs == interval){
+                                  
+                                    /*
+                                  LocalDateTime dateActuelle = LocalDateTime.now();
+                                  DateTimeFormatter formatterDate = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+                                  DateTimeFormatter formatterHeure = DateTimeFormatter.ofPattern("HH:mm:ss");
+                                  String date = dateActuelle.format(formatterDate);
+                                  String heure = dateActuelle.format(formatterHeure);
+                                  ligneEnCours = date + ";" + heure + ";" + compteur1 + ";" + compteur2 + ";" + compteur3;
+                                  sauvegarder(ligneEnCours);
+                                  nbr_seqs = 0;
+                                  */
+                                    
+                                  gestionEnregistrement();
+                                 
+                                }
                              
                              }
-                             
-                          
                       
 			} 
                         
@@ -941,7 +1057,7 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
             fluxSortie = new FileWriter(nomFichier);
             Sortie = new BufferedWriter(fluxSortie);
             
-            Sortie.write("Echantillon1;Echantillon2;Echantillon3");
+            Sortie.write("Date;Heure;Echantillon1;Echantillon2;Echantillon3");
             Sortie.newLine();
             
           
@@ -952,6 +1068,71 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
       
        
                 
+    }
+     
+     
+    private void sauvegarder(String chaine){
+    
+        
+    try {
+    //
+    Sortie.write(chaine);
+    Sortie.newLine();
+   
+    }
+    
+    catch (IOException ex) {
+              Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
+          }
+    }
+    
+    
+    private void gestionEnregistrement(){
+    
+                LocalDateTime dateActuelle = LocalDateTime.now();
+                DateTimeFormatter formatterDate = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+                DateTimeFormatter formatterHeure = DateTimeFormatter.ofPattern("HH:mm:ss");
+                String date = dateActuelle.format(formatterDate);
+                String heure = dateActuelle.format(formatterHeure);
+                ligneEnCours = date + ";" + heure + ";" + compteur1 + ";" + compteur2 + ";" + compteur3;
+                sauvegarder(ligneEnCours);
+                nbr_seqs = 0;
+    
+    }
+
+    private void enregisterInterval() {
+        
+         String choixInterval = jTextField5.getText();
+        
+            try {
+                interval = Integer.parseInt(choixInterval); 
+                if(interval<21){
+                    
+                 Repertoire= SelectFichier.getSelectedFile();
+                 nomFichier=Repertoire + "\\" + nomFichier + ".csv";
+                 System.out.println(Repertoire);
+                 System.out.println("nom fichier complet: " + nomFichier);
+                 initFichier();
+                 jTextField4.setVisible(false);
+                 jButton13.setVisible(false);
+                 jTextField5.setVisible(false);
+                 jButton12.setVisible(true);
+                 jButton14.setVisible(false);
+                 jTextArea1.setText("Les fichiers de résultats seront sauvegardés dans le fichier: " + nomFichier);
+                 initFichier();
+                
+                }else{
+                
+                 montrerErrorInterval("Choisissez un nombre entre 1 et 20");
+                 
+                }
+               
+                 
+            } catch (Exception e) {
+                
+                montrerErrorInterval("Erreur choix de l'interval");
+            }
+       
     }
    
     
