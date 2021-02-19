@@ -4,6 +4,7 @@ import gnu.io.CommPortIdentifier;
 import gnu.io.SerialPort;
 import gnu.io.SerialPortEvent;
 import gnu.io.SerialPortEventListener;
+import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -73,6 +74,7 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
     private boolean[] echantiilons = {false, false, false};
     private long[] totaux = {0,0,0};
     private boolean[] erreurs = {false, false, false};
+    private boolean[] actifs = {false, false, false};
     private String config = null;
     private SerialPortEvent SerialPortEvent;
     private boolean acquittement;
@@ -632,13 +634,16 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
         }else{
         //*************************
            if (jCheckBox1.isSelected()){
-        
+            
             echantiilons[0]= true;
+            actifs[0] = true;
             config = "!1:";
             
         }else{
-        
+            
+            jLabel8.setForeground(Color.GRAY);
             echantiilons[0]= false;
+            actifs[0] = false;
             config = "!0:";
         }
         
@@ -646,22 +651,28 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
          if (jCheckBox2.isSelected()){
        
             echantiilons[1]= true;
+            actifs[1] = true;
             config = config + "1:";
             
         }else{
-        
+            
+            jLabel2.setForeground(Color.GRAY);
             echantiilons[1]= false;
+            actifs[1] = false;
             config = config + "0:";
         }
          
           if (jCheckBox3.isSelected()){
         
             echantiilons[2]= true;
+            actifs[2] = true;
             config = config + "1";
             
         }else{
-        
+            
+            jLabel4.setForeground(Color.GRAY);
             echantiilons[2]= false;
+            actifs[2] = false;
             config = config + "0";
         }
         
@@ -799,11 +810,7 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
             
         }
         System.exit(0);
-        
-        //********
-        //envoyerData(arret);
-        //System.exit(0);
-        
+         
     }//GEN-LAST:event_jButton8ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
@@ -982,8 +989,10 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
                              System.out.println(inputLine);
                              jTextArea1.setText(inputLine);
                              boolean isCompteur;
+                             boolean isActifs;
                            
                              isCompteur = inputLine.startsWith("TOTAL");
+                             isActifs = inputLine.startsWith("@ACTIFS:");
                              if (isCompteur){
                              
                               String[] recept = inputLine.split(" ");
@@ -1037,6 +1046,53 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
                                 }
                              
                              }
+                            
+                            if (isActifs){
+                            
+                             String[] recept = inputLine.split(":");
+                             
+                            if (recept[1].equals("0")){
+                            
+                                actifs[0] = false;
+                                if (jCheckBox1.isSelected()){
+                                jLabel8.setForeground(Color.RED);
+                                jLabel8.setText(String.valueOf(compteur1));
+                                }
+                                
+                            }else {
+                            
+                                actifs[0] = true;
+                            }
+                            
+                             if (recept[2].equals("0")){
+                            
+                                actifs[1] = false;
+                                if (jCheckBox2.isSelected()){
+                                jLabel2.setForeground(Color.RED);
+                                jLabel2.setText(String.valueOf(compteur2));
+                                }
+                                
+                                
+                            }else {
+                            
+                                actifs[1] = true;
+                            }
+                             
+                              if (recept[3].equals("0")){
+                            
+                                actifs[2] = false;
+                                if (jCheckBox3.isSelected()){
+                                jLabel4.setForeground(Color.RED);
+                                jLabel4.setText(String.valueOf(compteur3));
+                                }
+                                
+                                
+                            }else {
+                            
+                                actifs[2] = true;
+                            }
+                            
+                            }   // fin  if (isActifs)
                       
 			} 
                         
