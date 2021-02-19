@@ -135,7 +135,7 @@ if (strcmp(mot,"0") == 0 ){   // Demande lancement de test
 if (strcmp(mot,"1") == 0 ){  // Demande arrêt du test
   
            digitalWrite(R6, LOW);  
-           Serial.println(String("@:Arrêt du test"));
+           Serial.println(String("@ARRET du test"));
            test = false;
            pause = false;
            
@@ -279,7 +279,7 @@ erreurs[i] = true;
 actifs[i] = false;
 //ERREUR0++;
 //erreurEnCours = true;
-Serial.println("Erreur sensor - Ech:" + String(i+1));
+Serial.println("@:Erreur sensor - Ech:" + String(i+1));
 //start = false;
 sonorite = true;
 //sortieERREUR();
@@ -294,7 +294,7 @@ erreurs[i] = true;
 actifs[i] = false;
 //if(!erreurEnCours){ERREUR0++;}
 
-Serial.println("Erreur contact porte - Ech:" + String(i+1));
+Serial.println("@:Erreur contact porte - Ech:" + String(i+1));
 //start = false;
 sonorite = true;
 //sortieERREUR();
@@ -303,7 +303,7 @@ sonorite = true;
 delay(5000); 
 
 totaux[i]++;
-String info = "TOTAL ECH #" + String(i+1) + ": "  + String(totaux[i]);
+String info = "@TOTAL ECH #" + String(i+1) + ": "  + String(totaux[i]);
 Serial.println(info);
 //Serial.println(TOTAUX[i]);
 //erreurEnCours = false;
