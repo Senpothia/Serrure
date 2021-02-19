@@ -112,8 +112,6 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
         
     }
     
-
-    
       public void connect(){
       
        CommPortIdentifier portID=null;
