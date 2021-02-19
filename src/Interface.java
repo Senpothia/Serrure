@@ -47,6 +47,7 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
     private boolean test_off = false;
     private boolean test_on = false;
     private boolean test_pause = false;
+    private boolean arret_valide = false;
     
     private OutputStream output=null;
     SerialPort serialPort;
@@ -618,7 +619,9 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-         if (!test_on){
+        
+        arret_valide = false;
+        if (!test_on){
         
         test_pause = false;
         test_on = true;
@@ -744,7 +747,7 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         
-        
+        arret_valide = false;
         if (!test_pause){
         
         test_pause = true;
@@ -802,6 +805,11 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
             
             envoyerData(arret);
             gestionEnregistrement();
+            while(!arret_valide){
+                
+                
+            
+            }
             Sortie.close();
             
         } catch (IOException ex) {
@@ -988,9 +996,11 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
                              jTextArea1.setText(inputLine);
                              boolean isCompteur;
                              boolean isActifs;
+                             boolean isArret;
                            
-                             isCompteur = inputLine.startsWith("TOTAL");
+                             isCompteur = inputLine.startsWith("@TOTAL");
                              isActifs = inputLine.startsWith("@ACTIFS:");
+                             isArret = inputLine.startsWith("@ARRET");
                              if (isCompteur){
                              
                               String[] recept = inputLine.split(" ");
@@ -1091,6 +1101,11 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
                             }
                             
                             }   // fin  if (isActifs)
+                            
+                            if(isArret){
+                            
+                                arret_valide = true;
+                            }
                       
 			} 
                         
