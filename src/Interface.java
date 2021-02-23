@@ -274,7 +274,7 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
         });
 
         jComboBox1.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "COM1", "COM2", "COM3", "COM4", "COM5", "COM11" }));
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9", "COM10", "COM11", "COM12", "COM13", "COM14", "COM15", "COM16", "COM17", "COM18", "COM19", "COM20", " " }));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -1042,16 +1042,6 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
                                 
                                 if (nbr_seqs == interval){
                                   
-                                    /*
-                                  LocalDateTime dateActuelle = LocalDateTime.now();
-                                  DateTimeFormatter formatterDate = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-                                  DateTimeFormatter formatterHeure = DateTimeFormatter.ofPattern("HH:mm:ss");
-                                  String date = dateActuelle.format(formatterDate);
-                                  String heure = dateActuelle.format(formatterHeure);
-                                  ligneEnCours = date + ";" + heure + ";" + compteur1 + ";" + compteur2 + ";" + compteur3;
-                                  sauvegarder(ligneEnCours);
-                                  nbr_seqs = 0;
-                                  */
                                     
                                   gestionEnregistrement();
                                  
