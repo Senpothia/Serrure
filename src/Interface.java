@@ -639,6 +639,17 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
         test_on = true;
         test_off = false;
         
+        
+        jLabel8.setText("0");
+        jLabel2.setText("0");
+        jLabel4.setText("0");
+        jTextField1.setText("");
+        jTextField2.setText("");
+        jTextField3.setText("");
+        compteur1 = 0;
+        compteur2 = 0;
+        compteur3 = 0;
+        
         if (!jCheckBox1.isSelected() && !jCheckBox2.isSelected() && !jCheckBox3.isSelected()){
         
             test_on = false;
@@ -735,6 +746,10 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
             jLabel6.setVisible(false);
             jTextArea1.setText("Test interrompu!");
             gestionEnregistrement();
+            nomFichierInit = false;
+            jTextField4.setText("<nom fichier>");
+          
+            
             try {
                 Sortie.close();
             } catch (IOException ex) {
