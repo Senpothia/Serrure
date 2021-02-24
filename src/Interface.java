@@ -65,6 +65,7 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
     // Variables pour sauvegarde fichier des résultats
     
     private String nomFichier;
+    private boolean nomFichierInit = false;
     private FileWriter fluxSortie;
     private BufferedWriter Sortie;
     private File Repertoire;
@@ -117,6 +118,8 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
       
        CommPortIdentifier portID=null;
         Enumeration portEnum=CommPortIdentifier.getPortIdentifiers();
+       
+        
         
         while(portEnum.hasMoreElements()){
             CommPortIdentifier actualPortID=(CommPortIdentifier) portEnum.nextElement();
@@ -622,8 +625,16 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         
         arret_valide = false;
-        if (!test_on){
         
+         if(!nomFichierInit){
+        
+        montrerErrorConfig("Nom de fichier nom défini!");
+        
+        }else{
+         
+          if (!test_on){
+        
+       
         test_pause = false;
         test_on = true;
         test_off = false;
@@ -731,6 +742,9 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
             }
         }
          
+         }
+       
+         
         
     }//GEN-LAST:event_jButton2ActionPerformed
 
@@ -811,10 +825,17 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
             
             envoyerData(arret);
             gestionEnregistrement();
-            while(!arret_valide){
+            
+            if(test_on){
+            
+                  while(!arret_valide){
                 
             }
+                  
             Sortie.close();
+            
+            }
+          
             
         } catch (IOException ex) {
             
@@ -877,11 +898,12 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
         if(nomFichier.equals("") || nomFichier.equals("<nom fichier>")){
         
         montrerErrorNom("Défaut de nom!");
+       
         
         }else{
             
             enregisterInterval();
-         
+            nomFichierInit = true;
         }
    }else{
         
@@ -1029,7 +1051,7 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
                              if (ech.equals("#3:")){
                              
                              jLabel4.setText(compteur);
-                             compteur1 = Long.parseLong(compteur);
+                             compteur3 = Long.parseLong(compteur);
                              
                              }
                     
@@ -1141,6 +1163,7 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
     //
     Sortie.write(chaine);
     Sortie.newLine();
+    Sortie.close();
    
     }
     
@@ -1157,9 +1180,12 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
                 DateTimeFormatter formatterHeure = DateTimeFormatter.ofPattern("HH:mm:ss");
                 String date = dateActuelle.format(formatterDate);
                 String heure = dateActuelle.format(formatterHeure);
+                
+                initFichier();
                 ligneEnCours = date + ";" + heure + ";" + compteur1 + ";" + compteur2 + ";" + compteur3;
                 sauvegarder(ligneEnCours);
                 nbr_seqs = 0;
+                
     
     }
 
