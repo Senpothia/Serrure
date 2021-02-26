@@ -89,11 +89,11 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
     private int interval = 1;
     private int nbr_seqs = 0; 
     
-    private URL imageVertOff =  getClass().getClassLoader().getResource("vert_off.png");
+    private URL imageVertOff =  getClass().getClassLoader().getResource("images/vert_off.png");
     Image imageOff = Toolkit.getDefaultToolkit().getImage(imageVertOff);
-    private URL imageVertOn =  getClass().getClassLoader().getResource("vert_on.png");
+    private URL imageVertOn =  getClass().getClassLoader().getResource("images/vert_on.png");
     Image imageOn = Toolkit.getDefaultToolkit().getImage(imageVertOn);
-    private URL imageRougeOff =  getClass().getClassLoader().getResource("rouge_off.png");
+    private URL imageRougeOff =  getClass().getClassLoader().getResource("images/rouge_off.png");
     Image imageRoff = Toolkit.getDefaultToolkit().getImage(imageRougeOff);
     /**
      * Creates new form Interface
