@@ -5,6 +5,8 @@ import gnu.io.SerialPort;
 import gnu.io.SerialPortEvent;
 import gnu.io.SerialPortEventListener;
 import java.awt.Color;
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -12,6 +14,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Enumeration;
@@ -85,7 +88,13 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
     private long compteur3 = 0;
     private int interval = 1;
     private int nbr_seqs = 0; 
-   
+    
+    private URL imageVertOff =  getClass().getClassLoader().getResource("vert_off.png");
+    Image imageOff = Toolkit.getDefaultToolkit().getImage(imageVertOff);
+    private URL imageVertOn =  getClass().getClassLoader().getResource("vert_on.png");
+    Image imageOn = Toolkit.getDefaultToolkit().getImage(imageVertOn);
+    private URL imageRougeOff =  getClass().getClassLoader().getResource("rouge_off.png");
+    Image imageRoff = Toolkit.getDefaultToolkit().getImage(imageRougeOff);
     /**
      * Creates new form Interface
      */
@@ -94,7 +103,8 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
         //connect();
         
         setTitle("INTERFACE DE TEST POUR SERRURES DX200I");
-        jLabel3.setIcon(new ImageIcon("src/vert_off.png"));    
+        jLabel3.setIcon(new ImageIcon(imageOff));   
+        //jLabel3.setIcon(new ImageIcon(imageVertOff));
         jButton2.setText("START");
         jButton5.setVisible(false);
         jLabel6.setVisible(false);
@@ -724,7 +734,7 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
         
          envoyerData(marche);
         
-        jLabel3.setIcon(new ImageIcon("src/vert_on.png"));
+        jLabel3.setIcon(new ImageIcon(imageOn));
         jButton2.setText("STOP");
         jButton5.setVisible(true);
         jButton5.setText("PAUSE");
@@ -739,7 +749,7 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
             test_on = false;
             test_off = true;
             envoyerData(arret);
-            jLabel3.setIcon(new ImageIcon("src/rouge_off.png"));  
+            jLabel3.setIcon(new ImageIcon(imageRoff));  
             jButton2.setText("START");
             jButton5.setVisible(false);
             jLabel6.setVisible(false);
@@ -791,7 +801,7 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
         jLabel3.setVisible(false);
         jButton2.setVisible(false);
         jLabel6.setVisible(true);
-        jLabel6.setIcon(new ImageIcon("src/vert_off.png")); 
+        jLabel6.setIcon(new ImageIcon(imageOff)); 
         jLabel5.setVisible(true);
         jButton5.setVisible(true);
         jButton5.setText("RELANCER");
@@ -806,7 +816,7 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
         
         jButton2.setVisible(true);
         jLabel3.setVisible(true);
-        jLabel3.setIcon(new ImageIcon("src/vert_on.png"));
+        jLabel3.setIcon(new ImageIcon(imageOn));
         jButton2.setText("STOP");
       
         jLabel6.setVisible(false);
