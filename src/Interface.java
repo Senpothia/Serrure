@@ -1,9 +1,5 @@
 
 
-import gnu.io.CommPortIdentifier;
-import gnu.io.SerialPort;
-import gnu.io.SerialPortEvent;
-import gnu.io.SerialPortEventListener;
 import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -31,7 +27,7 @@ import javax.swing.JOptionPane;
  *
  * @author michel
  */
-public class Interface extends javax.swing.JFrame implements SerialPortEventListener {
+public class Interface extends javax.swing.JFrame {
 
     
     private static final String Buzzer_OFF="c";
@@ -50,7 +46,7 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
     private boolean arret_valide = false;
     
     private OutputStream output=null;
-    SerialPort serialPort;
+  
     //Variables de connexion
   
     private BufferedReader input;
@@ -78,7 +74,7 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
     private boolean[] erreurs = {false, false, false};
     private boolean[] actifs = {false, false, false};
     private String config = null;
-    private SerialPortEvent SerialPortEvent;
+  
     private boolean acquittement;
     private long compteur1 = 0;
     private long compteur2 = 0;
@@ -114,72 +110,9 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
         
     }
     
-      public void connect(){
-      
-       CommPortIdentifier portID=null;
-        Enumeration portEnum=CommPortIdentifier.getPortIdentifiers();
-       
-        
-        
-        while(portEnum.hasMoreElements()){
-            CommPortIdentifier actualPortID=(CommPortIdentifier) portEnum.nextElement();
-            if(PORT.equals(actualPortID.getName())){
-                portID=actualPortID;
-                break;
-            }
-        }
-        
-        if(portID==null){
-            montrerError("Connexion impossible. Vérifier les paramètres de connexion");
-            
-        }
-        
-        try{
-            serialPort = (SerialPort) portID.open(this.getClass().getName(), TIMEOUT);
-            //Paramètre port série
-            
-            serialPort.setSerialPortParams(DATA_RATE, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
-            
-            input = new BufferedReader(new InputStreamReader(serialPort.getInputStream()));
-            output = serialPort.getOutputStream();
-            
-           // input = new BufferedReader(new InputStreamReader(serialPort.getInputStream()));
-        
-            serialPort.addEventListener(this);
-            serialPort.notifyOnDataAvailable(true);
-            jTextArea1.setText("Connexion réussie!");
-        
-        } 
-        
-           
-        
-        catch(Exception e){
-            montrerError(e.getMessage());
-            //System.exit(ERROR);
-            
-        }
-      
-      
-      }
-    private void envoyerData(String data){
-        try{
-            output.write(data.getBytes());
-        } catch(Exception e){
-            montrerError("Connexion impossible!");
-            System.exit(ERROR);
-        }
-       
-    }
     
-    
-      public synchronized void close() {
-        
-		if (serialPort != null) {
-			serialPort.removeEventListener();
-			serialPort.close();
-		}
-	}
-    
+      
+   
      public void montrerError(String message){
         JOptionPane.showMessageDialog(this, message, "Connexion impossible!", JOptionPane.ERROR_MESSAGE);
     }
@@ -701,7 +634,7 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
         }
         
         System.out.println("Configuration de test: " + config);
-        envoyerData(config);
+       // envoyerData(config);
         
         boolean timeout = false;
         LocalDateTime now = LocalDateTime.now();  
@@ -723,7 +656,7 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
          timeout = false;
          acquittement = false;
         
-         envoyerData(marche);
+         //envoyerData(marche);
         
         jLabel3.setIcon(new ImageIcon("src/vert_on.png"));
         jButton2.setText("STOP");
@@ -739,7 +672,7 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
             test_pause = false;
             test_on = false;
             test_off = true;
-            envoyerData(arret);
+            //envoyerData(arret);
             jLabel3.setIcon(new ImageIcon("src/rouge_off.png"));  
             jButton2.setText("START");
             jButton5.setVisible(false);
@@ -797,7 +730,7 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
         jButton5.setVisible(true);
         jButton5.setText("RELANCER");
       //  jTextArea1.setText("Test en pause");
-        envoyerData(pause);
+        //envoyerData(pause);
         
         }else{
         
@@ -814,7 +747,7 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
         jButton5.setVisible(true);
         jButton5.setText("PAUSE");
         //jTextArea1.setText("Reprise du test après interruption!");
-        envoyerData(marche);
+       // envoyerData(marche);
        
         }
        
@@ -826,11 +759,11 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
         
         PORT = (String) jComboBox1.getSelectedItem();
      
-        this.connect();
+       // this.connect();
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        envoyerData(RAZ2);
+        //envoyerData(RAZ2);
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
@@ -838,7 +771,7 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
         JOptionPane.showMessageDialog(this, "Voulez-vous fermer ce programme?", "Fermeture programme", JOptionPane.INFORMATION_MESSAGE);
         try {
             
-            envoyerData(arret);
+           // envoyerData(arret);
             gestionEnregistrement();
             
             if(test_on){
@@ -861,14 +794,14 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         
-        envoyerData(RAZ1);
+        //envoyerData(RAZ1);
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
        
         String compteur1 = jTextField1.getText();
         compteur1 = "#1:" + compteur1;
-        envoyerData(compteur1);
+        //envoyerData(compteur1);
         
     }//GEN-LAST:event_jButton9ActionPerformed
 
@@ -876,7 +809,7 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
       
         String compteur2 = jTextField2.getText();
         compteur2 = "#2:" + compteur2;
-        envoyerData(compteur2);
+        //envoyerData(compteur2);
     }//GEN-LAST:event_jButton10ActionPerformed
 
     private void jButton12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton12ActionPerformed
@@ -942,12 +875,12 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
       
         String compteur3 = jTextField3.getText();
         compteur3 = "#3:" + compteur3;
-        envoyerData(compteur3);
+        //envoyerData(compteur3);
         
     }//GEN-LAST:event_jButton11ActionPerformed
 
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
-         envoyerData(RAZ3);        
+         //envoyerData(RAZ3);        
     }//GEN-LAST:event_jButton7ActionPerformed
 
     /**
@@ -1025,6 +958,8 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
     private javax.swing.JTextField jTextField5;
     // End of variables declaration//GEN-END:variables
 
+    
+    /*
     @Override
     public void serialEvent(SerialPortEvent oEvent) {
        if (oEvent.getEventType() == SerialPortEvent.DATA_AVAILABLE) {
@@ -1149,6 +1084,7 @@ public class Interface extends javax.swing.JFrame implements SerialPortEventList
 		}
     }
     
+*/
      public void initFichier(){
         
         
