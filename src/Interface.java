@@ -75,7 +75,7 @@ public class Interface extends javax.swing.JFrame{
     
     // Variables de séquence de test
     
-    private boolean[] echantiilons = {false, false, false};
+    private boolean[] echantillons = {false, false, false};
     private long[] totaux = {0,0,0};
     private boolean[] erreurs = {false, false, false};
     private boolean[] actifs = {false, false, false};
@@ -599,7 +599,13 @@ public class Interface extends javax.swing.JFrame{
         compteur2 = 0;
         compteur3 = 0;
         System.out.println("Fermeture relais");
-        relais1.toggle();
+        relais1.high();
+              try {
+                  Thread.sleep(100);
+              } catch (InterruptedException ex) {
+                  Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
+              }
+        relais1.low();
         
         if (!jCheckBox1.isSelected() && !jCheckBox2.isSelected() && !jCheckBox3.isSelected()){
         
@@ -610,14 +616,14 @@ public class Interface extends javax.swing.JFrame{
         //*************************
            if (jCheckBox1.isSelected()){
             
-            echantiilons[0]= true;
+            echantillons[0]= true;
             actifs[0] = true;
             config = "!1:";
             
         }else{
             
             jLabel8.setForeground(Color.GRAY);
-            echantiilons[0]= false;
+            echantillons[0]= false;
             actifs[0] = false;
             config = "!0:";
         }
@@ -625,28 +631,28 @@ public class Interface extends javax.swing.JFrame{
         
          if (jCheckBox2.isSelected()){
        
-            echantiilons[1]= true;
+            echantillons[1]= true;
             actifs[1] = true;
             config = config + "1:";
             
         }else{
             
             jLabel2.setForeground(Color.GRAY);
-            echantiilons[1]= false;
+            echantillons[1]= false;
             actifs[1] = false;
             config = config + "0:";
         }
          
           if (jCheckBox3.isSelected()){
         
-            echantiilons[2]= true;
+            echantillons[2]= true;
             actifs[2] = true;
             config = config + "1";
             
         }else{
             
             jLabel4.setForeground(Color.GRAY);
-            echantiilons[2]= false;
+            echantillons[2]= false;
             actifs[2] = false;
             config = config + "0";
         }
@@ -699,7 +705,7 @@ public class Interface extends javax.swing.JFrame{
             gestionEnregistrement();
             nomFichierInit = false;
             jTextField4.setText("<nom fichier>");
-            relais1.toggle();
+            relais1.low();
             
             try {
                 Sortie.close();
