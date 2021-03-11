@@ -50,10 +50,10 @@ public class Sequence implements Runnable{
      private GpioPinDigitalInput[] sensors = {sensor1, sensor2, sensor3};
      private GpioPinDigitalInput[] contacts = {contact1, contact2, contact3};
 
-    @Override
+    
     public void run() {
        
-         while(Interface.test_on && !Interface.test_pause){
+       
        
        System.out.println("***** Nouvelle sequence  *****");
        for(int i=0; i<3; i++){
@@ -101,15 +101,12 @@ public class Sequence implements Runnable{
        
        }
        
+         System.out.println("***** Fin de sequence  *****");
+       
        }
       
       
-    
-    
-    
-    }
-   
-        
+ 
     }
 
    

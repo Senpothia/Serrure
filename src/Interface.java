@@ -25,29 +25,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/**
- *
- * @author michel
- */
 public class Interface extends javax.swing.JFrame{
 
-    
-    /*  Variables de la version Arduino
-    private static final String Buzzer_OFF="c";
-    private static String Buzzer_ON="b";
-    private static final String marche="0";   // ordre de lancement du test
-    private static final String arret="1";    // ordre d'arrêt du test
-    private static final String pause="2";    // ordre de mettre le test en pause
-    private static final String RAZ1="raz1"; 
-    private static final String RAZ2="raz2"; 
-    private static final String RAZ3="raz3";
-    */
     
     
     private boolean buzzer = false;
@@ -59,21 +38,6 @@ public class Interface extends javax.swing.JFrame{
     public static boolean test_var = false;
     
     private OutputStream output=null;
-   
-    //Variables de connexion
-    /*
-  
-    private BufferedReader input;
-    
-    private String PORT="COM1";
-    private String inputLine;
-    
-    private static final int TIMEOUT=2000; //Milisegundos
-    
-    private static final int DATA_RATE=9600;
-    */
-    
-    // Variables pour sauvegarde fichier des résultats
     
     private String nomFichier;
     private boolean nomFichierInit = false;
@@ -97,37 +61,9 @@ public class Interface extends javax.swing.JFrame{
    
     private int interval = 1;
     private int nbr_seqs = 0; 
+  //  private Sequence sequence;
     
-    // GPIO  -- Version Raspberry
-    
-    /*
-     final GpioController gpio = GpioFactory.getInstance();
-     final GpioPinDigitalOutput relais1 = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_25, "REL1", PinState.LOW);
-     final GpioPinDigitalOutput relais2 = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_28, "REL2", PinState.LOW);
-     final GpioPinDigitalOutput relais3 = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_29, "REL3", PinState.LOW);
-      
-     final GpioPinDigitalInput sensor1 = gpio.provisionDigitalInputPin(RaspiPin.GPIO_02, PinPullResistance.PULL_UP);
-     final GpioPinDigitalInput sensor2 = gpio.provisionDigitalInputPin(RaspiPin.GPIO_03, PinPullResistance.PULL_UP);
-     final GpioPinDigitalInput sensor3 = gpio.provisionDigitalInputPin(RaspiPin.GPIO_04, PinPullResistance.PULL_UP);
-     
-     final GpioPinDigitalInput contact1 = gpio.provisionDigitalInputPin(RaspiPin.GPIO_05, PinPullResistance.PULL_UP);
-     final GpioPinDigitalInput contact2 = gpio.provisionDigitalInputPin(RaspiPin.GPIO_06, PinPullResistance.PULL_UP);
-     final GpioPinDigitalInput contact3 = gpio.provisionDigitalInputPin(RaspiPin.GPIO_07, PinPullResistance.PULL_UP);
-     
-     private boolean stateSensor1;
-     private boolean stateSensor2;
-     private boolean stateSensor3;
-     
-     private boolean stateContact1;
-     private boolean stateContact2;
-     private boolean stateContact3;
-     
-     private GpioPinDigitalOutput[] relais = {relais1, relais2, relais3};
-     private GpioPinDigitalInput[] sensors = {sensor1, sensor2, sensor3};
-     private GpioPinDigitalInput[] contacts = {contact1, contact2, contact3};
-    /**
-     * Creates new form Interface
-     */
+  
     public Interface() {
         initComponents();
         //connect();
@@ -152,16 +88,13 @@ public class Interface extends javax.swing.JFrame{
         jButton13.setVisible(false);
         jComboBox1.setVisible(false);
         jButton6.setVisible(false);
+        
+      //  sequence = new Sequence();
       
         
     }
     
-    
-    
-    
-     public void montrerError(String message){
-        JOptionPane.showMessageDialog(this, message, "Connexion impossible!", JOptionPane.ERROR_MESSAGE);
-    }
+   
      
     public void montrerErrorConfig(String message){
         JOptionPane.showMessageDialog(this, message, "Aucune configuration!", JOptionPane.ERROR_MESSAGE);
@@ -604,20 +537,7 @@ public class Interface extends javax.swing.JFrame{
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         
-        
-        // Gestion bouton marche / arrêt
-        
-        /*  pour test
-        stateSensor1 = sensor1.isHigh();
-        stateSensor2 = sensor2.isHigh();
-        stateSensor3 = sensor3.isHigh();
-        
-        stateContact1 = contact1.isHigh();
-        stateContact2 = contact2.isHigh();
-        stateContact3 = contact3.isHigh();
-        */
        
-        
         arret_valide = false;
         
          if(!nomFichierInit){
@@ -699,24 +619,27 @@ public class Interface extends javax.swing.JFrame{
             config = config + "0";
         }
         
-          /*
-            try {
-                
-                sequence();
-            } catch (InterruptedException ex) {
-                Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
-            }
-          
-          */
-          
+         
+        /*
         Sequence sequence = new Sequence();
         Thread test = new Thread(sequence);
         test.start();
-          
+        */
+        
+
         jLabel3.setIcon(new ImageIcon("src/vert_on.png"));
         jButton2.setText("STOP");
         jButton5.setVisible(true);
         jButton5.setText("PAUSE");
+        
+       
+        
+        Sequence sequence = new Sequence();
+        Thread test = new Thread(sequence);
+        test.start();
+        raffraichir();
+        
+      
        
         }
         
@@ -783,8 +706,7 @@ public class Interface extends javax.swing.JFrame{
         jLabel5.setVisible(true);
         jButton5.setVisible(true);
         jButton5.setText("RELANCER");
-      //  jTextArea1.setText("Test en pause");
-        //envoyerData(pause);
+     
         
         }else{
         
@@ -800,9 +722,7 @@ public class Interface extends javax.swing.JFrame{
         jLabel6.setVisible(false);
         jButton5.setVisible(true);
         jButton5.setText("PAUSE");
-        //jTextArea1.setText("Reprise du test après interruption!");
-        //envoyerData(marche);
-       
+      
         }
        
         
@@ -1009,132 +929,7 @@ public class Interface extends javax.swing.JFrame{
     private javax.swing.JTextField jTextField5;
     // End of variables declaration//GEN-END:variables
 
-    
-    /*
-    @Override
-    public void serialEvent(SerialPortEvent oEvent) {
-       if (oEvent.getEventType() == SerialPortEvent.DATA_AVAILABLE) {
-                    
-			try {
-                                
-                             System.out.println("Réception message");
-                             inputLine=input.readLine();
-                             System.out.println(inputLine);
-                             jTextArea1.setText(inputLine);
-                             boolean isCompteur;
-                             boolean isActifs;
-                             boolean isArret;
-                           
-                             isCompteur = inputLine.startsWith("@TOTAL");
-                             isActifs = inputLine.startsWith("@ACTIFS:");
-                             isArret = inputLine.startsWith("@ARRET");
-                             if (isCompteur){
-                             
-                              String[] recept = inputLine.split(" ");
-                              String compteur = recept[3];
-                              String ech = recept[2];
-                              System.out.println("num echantillon: " + recept[2]);
-                              System.out.println("Compteur: " + recept[3]);
-                              
-                             if (ech.equals("#1:")){
-                             
-                             jLabel8.setText(compteur);
-                             compteur1 = Long.parseLong(compteur);
-                             
-                             }
-                             
-                             if (ech.equals("#2:")){
-                             
-                             jLabel2.setText(compteur);
-                             compteur2 = Long.parseLong(compteur);
-                             }
-                              
-                             if (ech.equals("#3:")){
-                             
-                             jLabel4.setText(compteur);
-                             compteur3 = Long.parseLong(compteur);
-                             
-                             }
-                    
-                             }
-                            
-                            
-                            if(inputLine.equals("@SEQ")){
-                                
-                                nbr_seqs++;
-                                
-                                if (nbr_seqs == interval){
-                                  
-                                    
-                                  gestionEnregistrement();
-                                 
-                                }
-                             
-                             }
-                            
-                            if (isActifs){
-                            
-                             String[] recept = inputLine.split(":");
-                             
-                            if (recept[1].equals("0")){
-                            
-                                actifs[0] = false;
-                                if (jCheckBox1.isSelected()){
-                                jLabel8.setForeground(Color.RED);
-                                jLabel8.setText(String.valueOf(compteur1));
-                                }
-                                
-                            }else {
-                            
-                                actifs[0] = true;
-                            }
-                            
-                             if (recept[2].equals("0")){
-                            
-                                actifs[1] = false;
-                                if (jCheckBox2.isSelected()){
-                                jLabel2.setForeground(Color.RED);
-                                jLabel2.setText(String.valueOf(compteur2));
-                                }
-                                
-                                
-                            }else {
-                            
-                                actifs[1] = true;
-                            }
-                             
-                              if (recept[3].equals("0")){
-                            
-                                actifs[2] = false;
-                                if (jCheckBox3.isSelected()){
-                                jLabel4.setForeground(Color.RED);
-                                jLabel4.setText(String.valueOf(compteur3));
-                                }
-                                
-                                
-                            }else {
-                            
-                                actifs[2] = true;
-                            }
-                            
-                            }   // fin  if (isActifs)
-                            
-                            if(isArret){
-                            
-                                arret_valide = true;
-                            }
-                      
-			} 
-                        
-                        catch (Exception e) {   // Traitement des exceptions
-                            
-				System.err.println(e.toString());
-			}
-                        
-                           
-		}
-    }
-    */
+  
      public void initFichier(){
         
         
@@ -1151,9 +946,7 @@ public class Interface extends javax.swing.JFrame{
             
            
         }
-      
-       
-                
+               
     }
      
      
@@ -1225,57 +1018,17 @@ public class Interface extends javax.swing.JFrame{
        
     }
     
-    /*
-    void sequence() throws InterruptedException{
+    
+    private void raffraichir(){
+    
+        jLabel8.setText(Long.toString(totaux[0]));
+        jLabel2.setText(Long.toString(totaux[1]));
+        jLabel4.setText(Long.toString(totaux[2]));
         
-       while(test_on && !test_pause){
-       
-       System.out.println("***** Nouvelle sequence  *****");
-       for(int i=0; i<3; i++){
-       
-       if (actifs[i]){
-       
-       // activer relais
-       System.out.println("Activation relais: " + i);
-       relais[i].high();
-       // delai anti-rebond
-     
-       Thread.sleep(300);
-       
-       // désactiver relais
-       relais[i].low();
-       // lecture sensor
-       System.out.println("Lecture sensor: " + i);
-       boolean sensor = sensors[i].isHigh();
-       // lecture contact
-       System.out.println("Lecture contact: " + i);
-       boolean contact = contacts[i].isHigh();
-       // incrémentation compteur - invalidation echantillon
-       if (!sensor && contact){
-       
-           totaux[i]++;
-           System.out.println("Total echantillon:" + i + " " + totaux[i]);
-       
-       }else{
-       
-       
-           actifs[i] = false;
-           erreurs[i] = true;
-       }
-       
-       Thread.sleep(5000);
-      
-       }
-       
-       }
-       
-       }
-      
-      
-    
-    
     
     }
+    
    
-    */
+    
+   
 }
