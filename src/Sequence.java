@@ -27,6 +27,7 @@ public class Sequence extends Observable implements Runnable{
      private boolean marche = false;
      private boolean pause = false;
      public boolean[] echantillons = {false, false, false};
+     public Resultat resultat = new Resultat();  
      public long[] totaux = {0,0,0};
      public boolean[] erreurs = {false, false, false};
      public boolean[] actifs = {false, false, false};
@@ -62,7 +63,10 @@ public class Sequence extends Observable implements Runnable{
     public void run() {
        
        System.out.println("***** Lancement thread  *****");
-       while(marche){
+       boolean echValide = actifs[0] || actifs[1] || actifs[2];
+       resultat.setErreurs(erreurs);
+       
+       while(marche && echValide){
            
            if (!pause){
            
@@ -90,7 +94,7 @@ public class Sequence extends Observable implements Runnable{
        System.out.println("Lecture contact: " + i);
        boolean contact = contacts[i].isHigh();
        // incrémentation compteur - invalidation echantillon
-       if (!sensor && contact){
+       if (!sensor && !contact){
            
            totaux[i]++;
            this.setTotaux(totaux);
@@ -98,11 +102,14 @@ public class Sequence extends Observable implements Runnable{
        
        }else{
        
-       
            this.actifs[i] = false;
            this.erreurs[i] = true;
+           this.setErreurs(erreurs);
            System.out.println("Test échoué echantillon:" + i );
        }
+       
+       
+       notifierResultat();
        
            try {
                Thread.sleep(5000);
@@ -122,7 +129,7 @@ public class Sequence extends Observable implements Runnable{
            
            }
        
-     
+         echValide = actifs[0] || actifs[1] || actifs[2];
        
        }
      
@@ -155,6 +162,8 @@ public class Sequence extends Observable implements Runnable{
 
     public void setErreurs(boolean[] erreurs) {
         this.erreurs = erreurs;
+       // this.setChanged();
+       // this.notifyObservers(this.getErreurs());
     }
 
     public void setActifs(boolean[] actifs) {
@@ -163,8 +172,7 @@ public class Sequence extends Observable implements Runnable{
 
     public void setTotaux(long[] totaux) {
         this.totaux = totaux;
-        this.setChanged();
-	this.notifyObservers(this.getTotaux());
+       
     }
     
      public void initTotaux(long[] totaux) {
@@ -187,7 +195,29 @@ public class Sequence extends Observable implements Runnable{
         this.pause = pause;
     }
 
+    public Resultat getResultat() {
+        return resultat;
+    }
+
+    public void setResultat(Resultat resultat) {
+        this.resultat = resultat;
+    }
+
   
+     public void initResultat(Resultat resultat) {
+        this.resultat = resultat;
+    }
+     
+     public void notifierResultat(){
+     
+          resultat.setErreurs(erreurs);
+          resultat.setTotaux(totaux);
+          resultat.setFin(!actifs[0] && !actifs[1] && !actifs[2]);
+          this.setChanged();
+	  this.notifyObservers(this.getResultat());
+     
+     }
+
  
     }
 

@@ -9,6 +9,7 @@ import com.pi4j.io.gpio.PinPullResistance;
 import com.pi4j.io.gpio.PinState;
 import com.pi4j.io.gpio.RaspiPin;
 import java.awt.Color;
+import java.awt.Font;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -540,6 +541,13 @@ public class Interface extends javax.swing.JFrame implements Observer{
        
         arret_valide = false;
         
+        jTextArea1.setForeground(Color.BLACK);
+        Font font = jTextArea1.getFont();  
+        jTextArea1.setFont(font.deriveFont(Font.TYPE1_FONT));
+        jLabel8.setForeground(Color.BLUE);
+        jLabel4.setForeground(Color.BLUE);
+        jLabel2.setForeground(Color.BLUE);
+        
          if(!nomFichierInit){
         
         montrerErrorConfig("Nom de fichier nom défini!");
@@ -561,9 +569,7 @@ public class Interface extends javax.swing.JFrame implements Observer{
         jTextField2.setText("");
         jTextField3.setText("");
      
-        
-             
-                 
+          
         
         if (!jCheckBox1.isSelected() && !jCheckBox2.isSelected() && !jCheckBox3.isSelected()){ 
         
@@ -633,6 +639,8 @@ public class Interface extends javax.swing.JFrame implements Observer{
         this.sequence.initTotaux(totaux);
         this.sequence.setActifs(actifs);
         this.sequence.setMarche(true);
+        resetErreurs();
+        this.sequence.setErreurs(erreurs);
         thread.start();
         
        
@@ -994,12 +1002,58 @@ public class Interface extends javax.swing.JFrame implements Observer{
     @Override
     public void update(Observable o, Object arg) {
         
-         long[] tab = (long[]) arg;
+    
         
-         jLabel8.setText((String) Long.toString(tab[0]));
-         jLabel2.setText((String) Long.toString(tab[1]));
-         jLabel4.setText((String) Long.toString(tab[2]));
-      
+         Resultat resultat = (Resultat) arg;
+         if(resultat.getErreurs()[0]){
+              jLabel8.setForeground(Color.RED);
+         }
+         
+          if(resultat.getErreurs()[1]){
+              jLabel2.setForeground(Color.RED);
+         }
+          
+           if(resultat.getErreurs()[2]){
+              jLabel4.setForeground(Color.RED);
+         }
+           
+         jLabel8.setText((String) Long.toString(resultat.getTotaux()[0]));
+         jLabel2.setText((String) Long.toString(resultat.getTotaux()[1]));
+         jLabel4.setText((String) Long.toString(resultat.getTotaux()[2]));
+         
+         if(resultat.isFin()){
+         
+             jTextArea1.setForeground(Color.red);
+             Font font = jTextArea1.getFont();  
+             jTextArea1.setFont(font.deriveFont(Font.BOLD));
+             jTextArea1.setText("TOUS LES ECHANTILLONS SONT EN ERREUR. FIN DE TEST");
+             
+            test_pause = false;
+            test_on = false;
+            test_off = true;
+            this.sequence.setMarche(false);
+            thread.interrupt();
+            //envoyerData(arret);
+            jLabel3.setIcon(new ImageIcon("src/rouge_off.png"));  
+            jButton2.setText("START");
+            jButton5.setVisible(false);
+            jLabel6.setVisible(false);
+           // jTextArea1.setText("Fin de test acquittée");
+            gestionEnregistrement();
+            nomFichierInit = false;
+            jTextField4.setText("<nom fichier>");
+            sequence.setErreurs(erreurs);
+         
+            
+            try {
+                Sortie.close();
+            } catch (IOException ex) {
+                Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
+            }
+         
+         }
+        
+        
         
     }
     
@@ -1043,6 +1097,16 @@ public class Interface extends javax.swing.JFrame implements Observer{
         totaux[0] = 0;
         totaux[1] = 0;
         totaux[2] = 0;
+    
+    }
+    
+    
+     private void resetErreurs(){
+        
+        erreurs[0] = false;
+        erreurs[1] = false;
+        erreurs[2] = false;
+      
     
     }
     
