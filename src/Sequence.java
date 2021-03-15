@@ -9,6 +9,7 @@ import com.pi4j.io.gpio.PinState;
 import com.pi4j.io.gpio.RaspiPin;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.Observable;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -20,9 +21,16 @@ import java.util.logging.Logger;
  *
  * @author pi
  */
-public class Sequence implements Runnable{
+public class Sequence extends Observable implements Runnable{
     
     
+     private boolean marche = false;
+     private boolean pause = false;
+     public boolean[] echantillons = {false, false, false};
+     public long[] totaux = {0,0,0};
+     public boolean[] erreurs = {false, false, false};
+     public boolean[] actifs = {false, false, false};
+     
      // GPIO  -- Version Raspberry
     
      final GpioController gpio = GpioFactory.getInstance();
@@ -53,12 +61,15 @@ public class Sequence implements Runnable{
     
     public void run() {
        
-       
-       
-       System.out.println("***** Nouvelle sequence  *****");
+       System.out.println("***** Lancement thread  *****");
+       while(marche){
+           
+           if (!pause){
+           
+               System.out.println("***** Nouvelle sequence  *****");
        for(int i=0; i<3; i++){
        
-       if (Interface.actifs[i]){
+       if (this.actifs[i]){
        
        // activer relais
        System.out.println("Activation relais: " + i);
@@ -80,15 +91,17 @@ public class Sequence implements Runnable{
        boolean contact = contacts[i].isHigh();
        // incrémentation compteur - invalidation echantillon
        if (!sensor && contact){
-       
-           Interface.totaux[i]++;
-           System.out.println("Total echantillon:" + i + " " + Interface.totaux[i]);
+           
+           totaux[i]++;
+           this.setTotaux(totaux);
+           System.out.println("Total echantillon:" + i + " " + this.totaux[i]);
        
        }else{
        
        
-           Interface.actifs[i] = false;
-           Interface.erreurs[i] = true;
+           this.actifs[i] = false;
+           this.erreurs[i] = true;
+           System.out.println("Test échoué echantillon:" + i );
        }
        
            try {
@@ -100,12 +113,81 @@ public class Sequence implements Runnable{
        }
        
        }
+           
+           
+           }else{
+           
+           while (pause){}
+           
+           
+           }
+       
+     
+       
+       }
+     
        
          System.out.println("***** Fin de sequence  *****");
        
        }
-      
-      
+
+    public boolean[] getEchantillons() {
+        return echantillons;
+    }
+    
+    
+    public boolean[] getErreurs() {
+        return erreurs;
+    }
+    
+     public boolean[] getActifs() {
+        return actifs;
+    }
+
+    public long[] getTotaux() {
+        return totaux;
+    }
+
+
+    public void setEchantillons(boolean[] echantillons) {
+        this.echantillons = echantillons;
+    }
+
+    public void setErreurs(boolean[] erreurs) {
+        this.erreurs = erreurs;
+    }
+
+    public void setActifs(boolean[] actifs) {
+        this.actifs = actifs;
+    }
+
+    public void setTotaux(long[] totaux) {
+        this.totaux = totaux;
+        this.setChanged();
+	this.notifyObservers(this.getTotaux());
+    }
+    
+     public void initTotaux(long[] totaux) {
+        this.totaux = totaux;
+    }
+
+    public boolean isMarche() {
+        return marche;
+    }
+
+    public void setMarche(boolean marche) {
+        this.marche = marche;
+    }
+
+    public boolean isPause() {
+        return pause;
+    }
+
+    public void setPause(boolean pause) {
+        this.pause = pause;
+    }
+
+  
  
     }
 

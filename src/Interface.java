@@ -19,17 +19,22 @@ import java.io.OutputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Enumeration;
+import java.util.Observable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
+import java.util.Observer;
 
-public class Interface extends javax.swing.JFrame{
+
+public class Interface extends javax.swing.JFrame implements Observer{
 
     
+    private Thread thread;
+    private Sequence sequence;
     
-    private boolean buzzer = false;
+   
     public static boolean test_off = false;
     public static boolean test_on = false;
     public static boolean test_pause = false;
@@ -48,16 +53,14 @@ public class Interface extends javax.swing.JFrame{
     
     // Variables de séquence de test
     
-    public static boolean[] echantillons = {false, false, false};
-    public static long[] totaux = {0,0,0};
-    public static boolean[] erreurs = {false, false, false};
-    public static boolean[] actifs = {false, false, false};
+    public boolean[] echantillons = {false, false, false};
+    public long[] totaux = {0,0,0};
+    public boolean[] erreurs = {false, false, false};
+    public boolean[] actifs = {false, false, false};
     private String config = null;
    
-    private boolean acquittement;
-    private long compteur1 = 0;
-    private long compteur2 = 0;
-    private long compteur3 = 0;
+    
+   
    
     private int interval = 1;
     private int nbr_seqs = 0; 
@@ -88,9 +91,6 @@ public class Interface extends javax.swing.JFrame{
         jButton13.setVisible(false);
         jComboBox1.setVisible(false);
         jButton6.setVisible(false);
-        
-      //  sequence = new Sequence();
-      
         
     }
     
@@ -560,9 +560,7 @@ public class Interface extends javax.swing.JFrame{
         jTextField1.setText("");
         jTextField2.setText("");
         jTextField3.setText("");
-        compteur1 = 0;
-        compteur2 = 0;
-        compteur3 = 0;
+     
         
              
                  
@@ -620,26 +618,23 @@ public class Interface extends javax.swing.JFrame{
         }
         
          
-        /*
-        Sequence sequence = new Sequence();
-        Thread test = new Thread(sequence);
-        test.start();
-        */
-        
-
+     
         jLabel3.setIcon(new ImageIcon("src/vert_on.png"));
         jButton2.setText("STOP");
         jButton5.setVisible(true);
         jButton5.setText("PAUSE");
         
        
+       // if (this.thread == null){
+        resetTotaux();
+        this.thread = getThread();
         
-        Sequence sequence = new Sequence();
-        Thread test = new Thread(sequence);
-        test.start();
-        raffraichir();
+        //}
+        this.sequence.initTotaux(totaux);
+        this.sequence.setActifs(actifs);
+        this.sequence.setMarche(true);
+        thread.start();
         
-      
        
         }
         
@@ -649,6 +644,8 @@ public class Interface extends javax.swing.JFrame{
             test_pause = false;
             test_on = false;
             test_off = true;
+            this.sequence.setMarche(false);
+            thread.interrupt();
             //envoyerData(arret);
             jLabel3.setIcon(new ImageIcon("src/rouge_off.png"));  
             jButton2.setText("START");
@@ -705,6 +702,7 @@ public class Interface extends javax.swing.JFrame{
         jLabel6.setIcon(new ImageIcon("src/vert_off.png")); 
         jLabel5.setVisible(true);
         jButton5.setVisible(true);
+        this.sequence.setPause(true);
         jButton5.setText("RELANCER");
      
         
@@ -722,6 +720,7 @@ public class Interface extends javax.swing.JFrame{
         jLabel6.setVisible(false);
         jButton5.setVisible(true);
         jButton5.setText("PAUSE");
+        this.sequence.setPause(false);
       
         }
        
@@ -821,12 +820,12 @@ public class Interface extends javax.swing.JFrame{
         
         }else{
             
-            enregisterInterval();
+          //  enregisterInterval();
             nomFichierInit = true;
         }
    }else{
         
-        enregisterInterval();
+        //enregisterInterval();
         
         }
        
@@ -854,40 +853,17 @@ public class Interface extends javax.swing.JFrame{
          //envoyerData(RAZ3);        
     }//GEN-LAST:event_jButton7ActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Interface.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Interface.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Interface.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Interface.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
+ /*
+    
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new Interface().setVisible(true);
             }
         });
     }
+    */
+    
+   
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JFileChooser SelectFichier;
@@ -976,12 +952,14 @@ public class Interface extends javax.swing.JFrame{
                 String heure = dateActuelle.format(formatterHeure);
                 
                 initFichier();
-                ligneEnCours = date + ";" + heure + ";" + compteur1 + ";" + compteur2 + ";" + compteur3;
+                ligneEnCours = date + ";" + heure + ";" + totaux[0] + ";" + totaux[1] + ";" + totaux[2];
                 sauvegarder(ligneEnCours);
                 nbr_seqs = 0;
                 
     
     }
+    
+    /*
 
     private void enregisterInterval() {
         
@@ -1018,17 +996,64 @@ public class Interface extends javax.swing.JFrame{
        
     }
     
-    
-    private void raffraichir(){
-    
-        jLabel8.setText(Long.toString(totaux[0]));
-        jLabel2.setText(Long.toString(totaux[1]));
-        jLabel4.setText(Long.toString(totaux[2]));
+    */
+   
+
+    @Override
+    public void update(Observable o, Object arg) {
         
+         long[] tab = (long[]) arg;
+        
+         jLabel8.setText((String) Long.toString(tab[0]));
+         jLabel2.setText((String) Long.toString(tab[1]));
+         jLabel4.setText((String) Long.toString(tab[2]));
+      
+        
+    }
+    
+     public Sequence getSequence() {
+      
+       if (this.sequence == null) {
+	this.sequence = new Sequence();
+        this.sequence.setActifs(this.actifs);
+        this.sequence.initTotaux(totaux);
+        this.sequence.setMarche(true);
+        this.sequence.addObserver(this);
+	
+	}
+	return this.sequence;
+    }
+
+    public void setSequence(Sequence sequence) {
+        this.sequence = sequence;
+    }
+
+   
+     public Thread getThread() {
+        
+       //if (this.thread == null) {
+               
+		this.setThread(new Thread(this.getSequence()));
+                
+	//}
+	return thread;
+      
+    }
+
+    private void setThread(Thread thread) {
+       
+        this.thread = thread;
+    }
+    
+    
+    private void resetTotaux(){
+        
+        totaux[0] = 0;
+        totaux[1] = 0;
+        totaux[2] = 0;
     
     }
     
-   
     
    
 }
