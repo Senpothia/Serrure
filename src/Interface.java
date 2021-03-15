@@ -64,7 +64,7 @@ public class Interface extends javax.swing.JFrame implements Observer{
    
     private int interval = 1;
     private int nbr_seqs = 0; 
-  //  private Sequence sequence;
+ 
     
   
     public Interface() {
@@ -820,12 +820,12 @@ public class Interface extends javax.swing.JFrame implements Observer{
         
         }else{
             
-          //  enregisterInterval();
+            enregisterInterval();
             nomFichierInit = true;
         }
-   }else{
+            }else{
         
-        //enregisterInterval();
+        enregisterInterval();
         
         }
        
@@ -853,15 +853,7 @@ public class Interface extends javax.swing.JFrame implements Observer{
          //envoyerData(RAZ3);        
     }//GEN-LAST:event_jButton7ActionPerformed
 
- /*
-    
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new Interface().setVisible(true);
-            }
-        });
-    }
-    */
+ 
     
    
 
@@ -959,7 +951,7 @@ public class Interface extends javax.swing.JFrame implements Observer{
     
     }
     
-    /*
+    
 
     private void enregisterInterval() {
         
@@ -970,7 +962,7 @@ public class Interface extends javax.swing.JFrame implements Observer{
                 if(interval<21){
                     
                  Repertoire= SelectFichier.getSelectedFile();
-                 nomFichier=Repertoire + "\\" + nomFichier + ".csv";
+                 nomFichier=Repertoire + "/" + nomFichier + ".csv";
                  System.out.println(Repertoire);
                  System.out.println("nom fichier complet: " + nomFichier);
                  initFichier();
@@ -996,7 +988,7 @@ public class Interface extends javax.swing.JFrame implements Observer{
        
     }
     
-    */
+    
    
 
     @Override
