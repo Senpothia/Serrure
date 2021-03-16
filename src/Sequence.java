@@ -111,11 +111,7 @@ public class Sequence extends Observable implements Runnable{
        
        notifierResultat();
        
-           try {
-               Thread.sleep(5000);
-           } catch (InterruptedException ex) {
-               Logger.getLogger(Sequence.class.getName()).log(Level.SEVERE, null, ex);
-           }
+        
       
        }
        
@@ -130,6 +126,11 @@ public class Sequence extends Observable implements Runnable{
            }
        
          echValide = actifs[0] || actifs[1] || actifs[2];
+            try {
+               Thread.sleep(5000);
+           } catch (InterruptedException ex) {
+               Logger.getLogger(Sequence.class.getName()).log(Level.SEVERE, null, ex);
+           }
        
        }
      
