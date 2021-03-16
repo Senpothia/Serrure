@@ -1,13 +1,7 @@
 
 
 
-import com.pi4j.io.gpio.GpioController;
-import com.pi4j.io.gpio.GpioFactory;
-import com.pi4j.io.gpio.GpioPinDigitalInput;
-import com.pi4j.io.gpio.GpioPinDigitalOutput;
-import com.pi4j.io.gpio.PinPullResistance;
-import com.pi4j.io.gpio.PinState;
-import com.pi4j.io.gpio.RaspiPin;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.io.BufferedReader;
@@ -751,17 +745,9 @@ public class Interface extends javax.swing.JFrame implements Observer{
             
            // envoyerData(arret);
             gestionEnregistrement();
-            
-            if(test_on){
-            
-                  while(!arret_valide){
-                
-            }
-                  
+           
             Sortie.close();
-            
-            }
-          
+           
             
         } catch (IOException ex) {
             
