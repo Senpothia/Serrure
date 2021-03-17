@@ -534,14 +534,7 @@ public class Interface extends javax.swing.JFrame implements Observer{
         
        
         arret_valide = false;
-        
-        jTextArea1.setForeground(Color.BLACK);
-        Font font = jTextArea1.getFont();  
-        jTextArea1.setFont(font.deriveFont(Font.TYPE1_FONT));
-        jLabel8.setForeground(Color.BLUE);
-        jLabel4.setForeground(Color.BLUE);
-        jLabel2.setForeground(Color.BLUE);
-        
+       
          if(!nomFichierInit){
         
         montrerErrorConfig("Nom de fichier nom défini!");
@@ -555,6 +548,12 @@ public class Interface extends javax.swing.JFrame implements Observer{
         test_on = true;
         test_off = false;
         
+        jTextArea1.setForeground(Color.BLACK);
+        Font font = jTextArea1.getFont();  
+        jTextArea1.setFont(font.deriveFont(Font.TYPE1_FONT));
+        jLabel8.setForeground(Color.BLUE);
+        jLabel4.setForeground(Color.BLUE);
+        jLabel2.setForeground(Color.BLUE);
         
         jLabel8.setText("0");
         jLabel2.setText("0");
@@ -643,6 +642,7 @@ public class Interface extends javax.swing.JFrame implements Observer{
      
        
         } else {
+              
             test_pause = false;
             test_on = false;
             test_off = true;
@@ -1071,9 +1071,7 @@ public class Interface extends javax.swing.JFrame implements Observer{
             }
          
          }
-        
-        
-        
+          
     }
     
      public Sequence getSequence() {
